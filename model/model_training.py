@@ -1,36 +1,26 @@
-from flask import Flask, request, jsonify
 import joblib
-import numpy as np
-import os
-
-model = None
-scaler = None
-if os.path.exists('model.pkl'):
-    model = joblib.load('model.pkl')
-if os.path.exists('scaler.pkl'):
-    scaler = joblib.load('scaler.pkl')
-
-app = Flask(__name__)
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.datasets import fetch_california_housing
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 
 
-@app.route('/predict', methods=['POST'])
-def predict():
-    data = request.get_json()
-    features = np.array(data['features']).reshape(1, -1)
-    if scaler is not None:
-        features = scaler.transform(features)
-    if model is None:
-        return jsonify({'error': 'model not found on server'}), 500
-    prediction = model.predict(features)[0]
-    # ensure JSON-serializable output
-    if hasattr(prediction, 'tolist'):
-        out = prediction.tolist()
-    elif np.isscalar(prediction):
-        out = int(prediction)
-    else:
-        out = prediction
-    return jsonify({'prediction': out})
+def main():
+	housing = fetch_california_housing()
+
+	X_train, X_test, y_train, y_test = train_test_split(housing.data, housing.target, test_size=0.2, random_state=42)
+
+	scaler = StandardScaler()
+	X_train_scaled = scaler.fit_transform(X_train)
+	X_test_scaled = scaler.transform(X_test)
+
+	model = RandomForestRegressor(n_estimators=100, random_state=42)
+	model.fit(X_train_scaled, y_train)
+
+	joblib.dump(model, 'model.pkl')
+	joblib.dump(scaler, 'scaler.pkl')
+	print("Model and scaler trained and saved to model.pkl and scaler.pkl")
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001)
+	main()
