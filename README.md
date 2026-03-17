@@ -1,5 +1,8 @@
-## Commands
-### pip3 install -r requirements.txt
-### python3 -m venv venv
-### source venv/bin/activate
-### pip install -r requirements.txt
+# This project includes a full MLOps workflow:
+
+- Virtual environment setup
+- Reproducible data & model training
+- DVC data/model tracking
+- Full pipeline automation with dvc.yaml
+- Docker image build & push
+- Optional Kubernetes deployment
