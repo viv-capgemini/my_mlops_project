@@ -39,13 +39,13 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ env.PYTHON_VERSION }}-${{ hashFiles('**/requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ env.PYTHON_VERSION }}-${{ hashFiles('model/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-${{ env.PYTHON_VERSION }}-
 
       - name: Build Docker image
         run: |
-          docker build -t $DOCKER_REPO:ci-${{ github.sha }} .
+          docker build -t $DOCKER_REPO:ci-${{ github.sha }} /model/.
 
       - name: Save image as artifact (optional)
         if: ${{ github.event_name == 'pull_request' }}
