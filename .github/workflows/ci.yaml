@@ -43,9 +43,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-${{ env.PYTHON_VERSION }}-
 
-      - name: Build Docker image
-        run: |
-          docker build -t $DOCKER_REPO:ci-${{ github.sha }} /model/.
+      
+      - name: Docker Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ./model
+          file: ./model/Dockerfile
+          push: true
+          tags: ${{ env.DOCKER_REPO }}:ci-${{ github.sha }}
+
+            
 
       - name: Save image as artifact (optional)
         if: ${{ github.event_name == 'pull_request' }}
