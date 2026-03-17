@@ -20,7 +20,7 @@ jobs:
     env:
       PYTHON_VERSION: "3.12"
       IMAGE_NAME: ml-model
-      DOCKER_REPO: ${{ secrets.DOCKERHUB_USER }}/ml-model
+      DOCKER_REPO: ${{ secrets.DOCKERHUB_USERNAME }}/ml-model
       # If you later use S3/Azure/GCS, set secrets and uncomment in steps.
 
     steps:
@@ -42,18 +42,6 @@ jobs:
           key: ${{ runner.os }}-pip-${{ env.PYTHON_VERSION }}-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-${{ env.PYTHON_VERSION }}-
-
-      - name: Install dependencies (project + DVC)
-        run: |
-          python -m pip install -U pip
-          pip install -r requirements.txt
-          # Install DVC core; pick extras later (s3/azure/gcs/ssh) as needed
-          pip install "dvc"
-
-      - name: Reproduce pipeline (optional in CI)
-        run: |
-          # If you want to verify pipeline runs deterministically
-          dvc repro || true
 
       - name: Build Docker image
         run: |
