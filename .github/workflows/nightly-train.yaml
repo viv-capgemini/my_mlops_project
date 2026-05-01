@@ -45,7 +45,9 @@ jobs:
       - name: Reproduce pipeline
         run: |
           dvc pull || true   # get any required inputs
+          dvc remote list
           dvc repro
+          ls -la
 
       - name: Track new/changed artifacts & push to DVC remote
         run: |
