@@ -41,13 +41,21 @@ jobs:
       #     dvc remote modify <remote-name> access_key_id "${{ secrets.AWS_ACCESS_KEY_ID }}"
       #     dvc remote modify <remote-name> secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
       #     dvc remote modify <remote-name> region "${{ secrets.AWS_DEFAULT_REGION }}"
-
       - name: Reproduce pipeline
         run: |
-          dvc pull || true   # get any required inputs
           dvc remote list
+          dvc pull || echo "DVC pull skipped because cache is incomplete; rebuilding from source"
+          test -f src/prepare.py
+          test -f src/train.py
+          test -f src/evaluate.py
           dvc repro
           ls -la
+      #- name: Reproduce pipeline
+      #  run: |
+      #    dvc pull || true   # get any required inputs
+      #    dvc remote list
+      #    dvc repro
+      #    ls -la
 
       - name: Track new/changed artifacts & push to DVC remote
         run: |
