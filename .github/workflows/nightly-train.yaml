@@ -33,14 +33,7 @@ jobs:
           python -m pip install -U pip
           pip install -r requirements.txt
           pip install "dvc"
-          # pip install "dvc[s3]" or "dvc[azure]" "dvc[gcs]" as needed
-
-      # Configure cloud credentials for DVC if applicable (uncomment example blocks below)
-      # - name: Configure DVC remote (S3 example)
-      #   run: |
-      #     dvc remote modify <remote-name> access_key_id "${{ secrets.AWS_ACCESS_KEY_ID }}"
-      #     dvc remote modify <remote-name> secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-      #     dvc remote modify <remote-name> region "${{ secrets.AWS_DEFAULT_REGION }}"
+          
       - name: Reproduce pipeline
         run: |
           dvc remote list
@@ -50,12 +43,6 @@ jobs:
           test -f src/evaluate.py
           dvc repro
           ls -la
-      #- name: Reproduce pipeline
-      #  run: |
-      #    dvc pull || true   # get any required inputs
-      #    dvc remote list
-      #    dvc repro
-      #    ls -la
 
       - name: Track new/changed artifacts & push to DVC remote
         run: |
